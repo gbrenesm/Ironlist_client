@@ -1,9 +1,34 @@
+/* Ironhack blue: rgb(45, 197, 250) */
+
 .site-layout-content {
   background: #fff;
-  padding: 24px;
-  min-height: 280px;
+  padding: 30px;
+  min-height: 100vh;
 }
 
 li{
   list-style: none;
+}
+
+ul div{
+  display: flex;
+  margin-top: 20px;
+}
+
+.home{
+  display: flex;
+  justify-content: space-between;
+}
+
+.home>div{
+  width: 30%;
+}
+
+.usertasks{
+  width: 30%;
+}
+.usertasks>div{
+  display: flex;
+  justify-content: space-between;
+  padding-top: 20px;
 }

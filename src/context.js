@@ -13,7 +13,6 @@ function ContextProvider({ children }) {
       const { user } = await getCurrentUser()
       setUser(user)
     }
-    console.log(user)
     userdata()
   }, [])
 

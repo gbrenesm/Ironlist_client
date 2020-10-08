@@ -1,8 +1,10 @@
 import React, { useContext } from 'react'
-import useSWR from "swr"
+import useSWR, { trigger } from "swr"
 import { Context } from "../context"
 import { checkTask, newTask } from "../services/tasks"
-import { Form, Input, Button, Checkbox } from "antd"
+import { Form, Input, Button, Checkbox, Typography } from "antd"
+const { Title } = Typography
+
 
 function Home() {
   const { user } = useContext(Context)
@@ -12,11 +14,13 @@ function Home() {
   
   const onCheckboxChange = (taskId) => {
     checkTask(taskId)
+    trigger('/api/tasks')
   };
 
   const submitForm = async values => {
     await newTask(values)
     console.log(values)
+    trigger('/api/tasks')
   }
 
   const onFinishFailed = errorInfo => {
@@ -24,24 +28,26 @@ function Home() {
   };
 
   return (
-    <>
-    {user && <h1>Welcome {user.email}</h1>}
+    <div className="home">
     <div>
-        <h1>To-do list</h1>
+    {user && <h1>Welcome {user.email}</h1>}
+        <Title>To-do list</Title>
         <ul>
           {data? data.tasks.map((task, i) => (
             <>
-            <Checkbox checked={task.completed === true? true : false} onChange={() => onCheckboxChange(task._id)}/>
+            <div>
+            {user && <Checkbox checked={task.completed === true? true : false} onChange={() => onCheckboxChange(task._id)}/>}
             <li style={task.completed === true? {textDecoration: "line-through"}:{}} key={i}>{task.description}</li>
-              {task.completedBy? <p>Completed by: {task.completedBy.email}</p>: <></>}
+            </div>
+            {task.completedBy? <p>Completed by: {task.completedBy.email}</p>: <></>}
             </>
           )): <p>Aún no hay</p>}
         </ul>
     </div>
       {user && 
       <div>
-        <h2> Create a new task</h2>
-        <Form
+        <Title level={2}> Create a new task</Title>
+        <Form 
         name="basic"
         initialValues={{ remember: true }}
         onFinish={submitForm}
@@ -61,7 +67,7 @@ function Home() {
         </Form.Item>
       </Form>
       </div>}
-    </>
+    </div>
   )
 }
 

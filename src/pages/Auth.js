@@ -1,8 +1,9 @@
 import React, { useContext, useState } from 'react'
 import { Context } from "../context"
 import { signup, login } from "../services/auth"
-import { Form, Input, Button } from 'antd';
+import { Form, Input, Button, Alert } from 'antd';
 import { Link } from "react-router-dom"
+
 const layout = {
   labelCol: { span: 8 },
   wrapperCol: { span: 16 },
@@ -15,16 +16,27 @@ const tailLayout = {
 function Auth({ history }) {
     const { ctxUser } = useContext(Context)
     const [signupForm, setsignupForm] = useState(true)
+    const [error, setError] = useState(false)
 
     const onFinishSigunp = async values => {
-      await signup(values)
-      setsignupForm(false)
+      try {
+        await signup(values)
+        setsignupForm(false)
+      }
+      catch (error){
+        setError(true)
+      }
     };
 
     const onFinishLogin = async values => {
+     try {
       const user = await login(values)
       ctxUser(user)
       history.push("/")
+     }
+     catch(error){
+      setError(true)
+     }
     }
   
     const onFinishFailed = errorInfo => {
@@ -69,6 +81,7 @@ function Auth({ history }) {
           </Button>
         </Form.Item>
       </Form>
+      {error && <Alert message="The email is alredy in use" type="error" />}
       <p>Al redy have an acount? <Link onClick={changeFrom}>Login</Link></p>
     </>}
     {!signupForm &&
@@ -103,6 +116,7 @@ function Auth({ history }) {
           </Button>
         </Form.Item>
       </Form>
+      {error && <Alert message="The email o password is incorrect" type="error" />}
     </>}
     </>
   )
