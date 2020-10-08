@@ -8,9 +8,7 @@ const { Title } = Typography
 
 function Home() {
   const { user } = useContext(Context)
-  const { data, error } = useSWR('/api/tasks')
-  if (error) return "An error has occurred.";
-  if (!data) return "Loading...";
+  const { data } = useSWR('/api/tasks')
   
   const onCheckboxChange = (taskId) => {
     checkTask(taskId)
