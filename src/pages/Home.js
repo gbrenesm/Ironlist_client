@@ -1,8 +1,8 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext } from 'react'
 import useSWR from "swr"
 import { Context } from "../context"
-import { checkTask } from "../services/tasks"
-import { Checkbox } from "antd"
+import { checkTask, newTask } from "../services/tasks"
+import { Form, Input, Button, Checkbox } from "antd"
 
 function Home() {
   const { user } = useContext(Context)
@@ -10,8 +10,17 @@ function Home() {
   if (error) return "An error has occurred.";
   if (!data) return "Loading...";
   
-  const onCheckboxChange = (taskId)=> {
+  const onCheckboxChange = (taskId) => {
     checkTask(taskId)
+  };
+
+  const submitForm = async values => {
+    await newTask(values)
+    console.log(values)
+  }
+
+  const onFinishFailed = errorInfo => {
+    console.log('Failed:', errorInfo);
   };
 
   return (
@@ -28,7 +37,30 @@ function Home() {
             </>
           )): <p>Aún no hay</p>}
         </ul>
-     </div>
+    </div>
+      {user && 
+      <div>
+        <h2> Create a new task</h2>
+        <Form
+        name="basic"
+        initialValues={{ remember: true }}
+        onFinish={submitForm}
+        onFinishFailed={onFinishFailed}
+      >
+        <Form.Item
+          label="Task"
+          name="description"
+          rules={[{ required: true, message: 'Please add the description of the new task' }]}
+        >
+          <Input />
+        </Form.Item>
+        <Form.Item>
+          <Button type="primary" htmlType="submit">
+            Submit
+          </Button>
+        </Form.Item>
+      </Form>
+      </div>}
     </>
   )
 }
